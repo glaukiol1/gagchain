@@ -7,6 +7,8 @@ import (
 	"github.com/glaukiol1/gagchain/blockchain"
 )
 
+// TODO: Make a TCP server for communication between nodes.
+
 func main() {
 	chain := blockchain.InitBlockchain()
 	chain.AddBlock("Block 1 jkanjfbhfbofuoiy41y3o12y41ou4y1u4yuOYUO$YOUY!OUIY$@UIO!Y$!OI$@!")
