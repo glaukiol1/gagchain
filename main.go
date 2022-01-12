@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/glaukiol1/gagchain/com"
+	"github.com/glaukiol1/gagchain/blockchain"
 )
 
 // TODO: Make a TCP server for communication between nodes.
@@ -21,6 +21,5 @@ func main() {
 	// 	fmt.Println("--------------------")
 	// }
 
-	com.MainTest(8888)
-	com.MessageSendTest("127.0.0.1:8888")
+	println(blockchain.InitBlockchain().RequestChain())
 }
