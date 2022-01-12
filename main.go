@@ -21,5 +21,6 @@ func main() {
 	// 	fmt.Println("--------------------")
 	// }
 
-	com.MainTest()
+	// com.MainTest(8888)
+	com.MessageSendTest("127.0.0.1:8888")
 }
