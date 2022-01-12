@@ -7,29 +7,34 @@ import (
 	"strings"
 )
 
-func StartServer() {
+type fn func(message string)
+
+func StartServer(port int, cb fn) {
 	// runs on MessagePipeStart(func (message string))
 	// used to listen on a port
 	// and wait for messages
 
-	serverStart(8888)
+	serverStart(port, func(message string) {
+		cb(message)
+	})
 }
 
-func handleNewMsg(c net.Conn) {
+func handleNewMsg(c net.Conn) string {
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if err != nil {
 			fmt.Println(err)
-			return
+			return "ERROR"
 		}
 		msg := strings.TrimSpace(string(netData))
-		println("New Msg: " + msg)
 		c.Close()
-		break
+		return msg
 	}
 }
 
-func serverStart(port int) {
+type serverStartFunc func(message string)
+
+func serverStart(port int, cb serverStartFunc) {
 	PORT := ":" + fmt.Sprint(port)
 	l, err := net.Listen("tcp", PORT)
 	if err != nil {
@@ -44,6 +49,6 @@ func serverStart(port int) {
 			fmt.Println(err)
 			return
 		}
-		handleNewMsg(c)
+		cb(handleNewMsg(c))
 	}
 }

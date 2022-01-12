@@ -1,5 +1,7 @@
 package com
 
 func MainTest() {
-	StartServer()
+	MessagePipeStart(8888, func(message string) {
+		println("New message: " + message)
+	})
 }
