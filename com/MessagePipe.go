@@ -4,13 +4,16 @@ import "strings"
 
 type MessagePipeFunc func(message Message)
 
+type MsgType struct {
+	name string
+}
 type Message struct {
-	msgtype string
+	msgtype MsgType
 	msgdata []string
 }
 
 func MessagePipeStart(port int, cb MessagePipeFunc) {
 	StartServer(port, func(message string) {
-		cb(Message{strings.Split(message, " ")[0], strings.Split(message, " ")[1:]})
+		cb(Message{MsgType{strings.Split(message, " ")[0]}, strings.Split(message, " ")[1:]})
 	})
 }
