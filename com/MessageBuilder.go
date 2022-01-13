@@ -1,5 +1,7 @@
 package com
 
+import "fmt"
+
 // message builder
 // build messages from templates
 // like transactions
@@ -12,3 +14,7 @@ func TYPE_GET_CHAIN() string {
 }
 
 func TYPE_SEND_TRANSACTION() // todo
+
+func TYPE_GET_BLOCKS_SINCE(since int) string {
+	return "TYPE_GET_BLOCKS_SINCE " + fmt.Sprint(since)
+}
