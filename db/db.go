@@ -6,10 +6,6 @@ type DB struct {
 	location string
 }
 
-func (db *DB) InitDatabase(location string) {
-	db.location = location
-}
-
 func (db *DB) GetContents() string {
 	if db.location == "" {
 		panic("Set up the DB first")
@@ -28,4 +24,8 @@ func (db *DB) Write(data string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func GetDB(location string) DB {
+	return DB{location}
 }
