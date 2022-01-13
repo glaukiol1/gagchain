@@ -1,6 +1,9 @@
 package db
 
-import "os"
+import (
+	"errors"
+	"os"
+)
 
 type DB struct {
 	location string
@@ -28,4 +31,12 @@ func (db *DB) Write(data string) {
 
 func GetDB(location string) DB {
 	return DB{location}
+}
+
+func DB_DoesExist(location string) bool {
+	if _, err := os.Stat(location); errors.Is(err, os.ErrNotExist) {
+		return false
+	} else {
+		return true
+	}
 }

@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/glaukiol1/gagchain/blockchain"
+	"github.com/glaukiol1/gagchain/db"
 )
 
 // TODO: Make a TCP server for communication between nodes.
@@ -20,6 +24,18 @@ func main() {
 	// 	fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
 	// 	fmt.Println("--------------------")
 	// }
+	db_location := "./db/db.db"
+	dab := db.GetDB(db_location)
+	var v []*blockchain.Block
+	json.Unmarshal([]byte(dab.GetContents()), &v)
+	var bc *blockchain.Blockchain
+	if db.DB_DoesExist(db_location) {
+		bc = &blockchain.Blockchain{v} // ignore warning
+	} else {
+		bc = blockchain.InitBlockchain()
+	}
 
-	println(blockchain.InitBlockchain().RequestChain())
+	// dab.Write(bc.RequestChain())
+
+	fmt.Println(string(bc.Blocks[0].Data)) // print the genesis block
 }
