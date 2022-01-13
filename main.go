@@ -7,8 +7,6 @@ import (
 	"github.com/glaukiol1/gagchain/db"
 )
 
-// TODO: Make a TCP server for communication between nodes.
-
 func main() {
 	// chain := blockchain.InitBlockchain()
 	// chain.AddBlock("Block 1 jkanjfbhfbofuoiy41y3o12y41ou4y1u4yuOYUO$YOUY!OUIY$@UIO!Y$!OI$@!")
@@ -37,7 +35,7 @@ func main() {
 	bc.AddBlock("Block 1")
 	dab.Write(bc.RequestChain())
 
-	dab.UpdateDB()
+	// dab.UpdateDB()
 
 	fmt.Println(string(bc.Blocks[len(bc.Blocks)-1].Data)) // print the genesis block
 }
