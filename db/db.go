@@ -1,8 +1,11 @@
 package db
 
 import (
+	"encoding/json"
 	"errors"
 	"os"
+
+	"github.com/glaukiol1/gagchain/blockchain"
 )
 
 type DB struct {
@@ -27,6 +30,12 @@ func (db *DB) Write(data string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (db *DB) ParseDB() []*blockchain.Block {
+	var v []*blockchain.Block
+	json.Unmarshal([]byte(db.GetContents()), &v)
+	return v
 }
 
 func GetDB(location string) DB {

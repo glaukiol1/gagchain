@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/glaukiol1/gagchain/blockchain"
@@ -27,15 +26,18 @@ func main() {
 	db_location := "./db/db.db"
 	dab := db.GetDB(db_location)
 	var v []*blockchain.Block
-	json.Unmarshal([]byte(dab.GetContents()), &v)
 	var bc *blockchain.Blockchain
 	if db.DB_DoesExist(db_location) {
+		v = dab.ParseDB()
 		bc = &blockchain.Blockchain{v} // ignore warning
 	} else {
 		bc = blockchain.InitBlockchain()
 	}
 
-	// dab.Write(bc.RequestChain())
+	bc.AddBlock("Block 1")
+	dab.Write(bc.RequestChain())
 
-	fmt.Println(string(bc.Blocks[0].Data)) // print the genesis block
+	dab.UpdateDB()
+
+	fmt.Println(string(bc.Blocks[len(bc.Blocks)-1].Data)) // print the genesis block
 }

@@ -1,24 +1,28 @@
 package blockchain
 
+import "time"
+
 type Blockchain struct {
 	Blocks []*Block //
 }
 
 type Block struct {
-	Hash     []byte //
-	Data     []byte //
-	PrevHash []byte //
-	Nonce    int    //
+	Hash      []byte //
+	Data      []byte //
+	PrevHash  []byte //
+	Nonce     int    //
+	Id        int    //
+	Timestamp int    //
 }
 
 func (bc *Blockchain) AddBlock(data string) {
-	prevHash := bc.Blocks[len(bc.Blocks)-1].Hash
-	new := CreateBlock(data, prevHash)
+	prevBlock := bc.Blocks[len(bc.Blocks)-1]
+	new := CreateBlock(data, prevBlock.Hash, prevBlock.Id)
 	bc.Blocks = append(bc.Blocks, new)
 }
 
-func CreateBlock(data string, prevHash []byte) *Block {
-	block := &Block{[]byte{}, []byte(data), prevHash, 0}
+func CreateBlock(data string, prevHash []byte, prevId int) *Block {
+	block := &Block{[]byte{}, []byte(data), prevHash, 0, prevId + 1, int(time.Now().Unix())}
 	pow := NewProof(block)
 	nonce, hash := pow.Run()
 
@@ -28,7 +32,7 @@ func CreateBlock(data string, prevHash []byte) *Block {
 }
 
 func GetGenesis() *Block {
-	return CreateBlock("Genesis", []byte{})
+	return CreateBlock("Genesis", []byte{}, -1)
 }
 
 func InitBlockchain() *Blockchain {
