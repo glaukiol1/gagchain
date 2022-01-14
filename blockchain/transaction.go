@@ -46,3 +46,10 @@ func (trns *Transaction) VerifySignature() bool {
 
 	return VerifySign(publicKey, trns.Signature, trns.GetTransactionJSON())
 }
+
+func (trns *Transaction) IsReady() bool {
+	if len(trns.Signature) == 0 {
+		return false
+	}
+	return true
+}

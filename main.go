@@ -53,6 +53,7 @@ func main() {
 	pb, pk := blockchain.Keygen()
 	trns2 := blockchain.NewTransactionInstance(pb, "0xtest3", 5000)
 	// pb1, pk1 := blockchain.Keygen()
+	println(trns2.IsReady())
 	fmt.Println("Public key: " + blockchain.PubkeyToAddress(pb))
 	trns2.Sign(blockchain.PrivateKeyToHex(pk))
 	println(trns2.VerifySignature())
