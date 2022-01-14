@@ -6,7 +6,6 @@ import "fmt"
 // --- add transactions
 // --- mine transactions
 // --- --- Part of this is checking the signature
-// --- edit transaction
 // --- sort transactions (by gas fee)
 
 const MIN_transactions_in_block = 2 // this is excluding mint address
@@ -23,10 +22,6 @@ func (tp *TransactionPool) AddTransaction(transaction *Transaction) int {
 	pos := len(tp.pool) // same as len(tp.pool)-1+1
 	tp.pool = append(tp.pool, transaction)
 	return pos
-}
-
-func (tp *TransactionPool) EditTransaction(transactionPos int, newTransaction *Transaction) {
-	tp.pool[transactionPos] = newTransaction
 }
 
 func (tp *TransactionPool) MineTransactions() []*Transaction {

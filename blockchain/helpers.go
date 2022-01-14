@@ -13,7 +13,7 @@ func (bc *Blockchain) GetBalance(address string, tp *TransactionPool) int {
 		}
 	}
 	for _, trns := range tp.pool {
-		if trns.IsReady() {
+		if trns.IsValid(bc, tp) {
 			if string(trns.To) == address {
 				balance += trns.Amount
 			}
