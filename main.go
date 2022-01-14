@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/glaukiol1/gagchain/blockchain" // blockchain main module
@@ -8,11 +9,11 @@ import (
 )
 
 func main() {
-	chain := blockchain.InitBlockchain()
-	trns1 := blockchain.NewTransactionInstance("0xtest1", "0xtest2", 10000)
-	trns2 := blockchain.NewTransactionInstance("0xtest2", "0xtest3", 5000)
-	var arr1 []*blockchain.Transaction
-	chain.AddBlock(append(arr1, trns1, trns2))
+	// chain := blockchain.InitBlockchain()
+	// trns1 := blockchain.NewTransactionInstance("0xtest1", "0xtest2", 10000)
+	// trns2 := blockchain.NewTransactionInstance("0xtest2", "0xtest3", 5000)
+	// var arr1 []*blockchain.Transaction
+	// chain.AddBlock(append(arr1, trns1, trns2))
 
 	// var arr2 []*blockchain.Transaction
 	// chain.AddBlock(append(arr2, trns2))
@@ -49,6 +50,12 @@ func main() {
 
 	// dat := bc.Blocks[0].Data
 	// fmt.Println(string(dat[0].Output)) // print the genesis block
-	pb, _ := blockchain.Keygen()
+
+	trns2 := blockchain.NewTransactionInstance("0xtest2", "0xtest3", 5000)
+	pb, pk := blockchain.Keygen()
+	// pb1, _ := blockchain.Keygen()
 	fmt.Println(blockchain.PubkeyToAddress(pb))
+	dat, _ := json.Marshal(trns2)
+	sign := blockchain.Sign(pk, string(dat))
+	blockchain.VerifySign(pb, sign, string(dat))
 }

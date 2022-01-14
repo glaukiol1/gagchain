@@ -1,7 +1,9 @@
 package blockchain
 
 import (
+	"bytes"
 	"crypto/ecdsa"
+	"fmt"
 	"log"
 
 	"github.com/ethereum/go-ethereum/crypto"
@@ -28,4 +30,36 @@ func Keygen() (*ecdsa.PublicKey, *ecdsa.PrivateKey) {
 
 func PubkeyToAddress(publicKeyECDSA *ecdsa.PublicKey) string {
 	return crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
+}
+
+func Sign(privateKey *ecdsa.PrivateKey, data string) []byte {
+	// privateKey, err := crypto.HexToECDSA("fad9c8855b740a0b7ed4c221dbad0f33a83a49cad6b3fe8d5817ac83d38b6a19")
+	// if err != nil {
+	// log.Fatal(err)
+	// }
+
+	hash := crypto.Keccak256Hash([]byte(data))
+
+	signature, err := crypto.Sign(hash.Bytes(), privateKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return signature
+}
+
+func VerifySign(publicKeyECDSA *ecdsa.PublicKey, signature []byte, dat string) {
+
+	publicKeyBytes := crypto.FromECDSAPub(publicKeyECDSA)
+
+	data := []byte(dat)
+	hash := crypto.Keccak256Hash(data)
+
+	sigPublicKey, err := crypto.Ecrecover(hash.Bytes(), signature)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	matches := bytes.Equal(sigPublicKey, publicKeyBytes)
+	fmt.Println(matches) // true
 }
