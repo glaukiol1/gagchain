@@ -32,6 +32,10 @@ func CreateBlock(data []*Transaction, prevHash []byte, prevId int) *Block {
 	pow := NewProof(block)
 	nonce, hash := pow.Run()
 
+	// check for invalid transactions here
+	// make a function to validate transactions
+	// and out it of the block
+
 	block.Hash = hash
 	block.Nonce = nonce
 	return block

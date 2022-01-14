@@ -20,9 +20,6 @@ type Transaction struct {
 }
 
 func (bc *Blockchain) NewTransactionInstance(from *ecdsa.PublicKey, to string, amount int, tp *TransactionPool) *Transaction {
-	if bc.GetBalance(crypto.PubkeyToAddress(*from).Hex(), tp) < amount {
-		panic("Not enough funds to complete this transaction")
-	}
 	return &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*from).Hex()), crypto.FromECDSAPub(from), []byte(to), amount, []byte{}, [32]byte{}}
 }
 
@@ -60,9 +57,6 @@ func (trns *Transaction) IsReady() bool {
 }
 
 func (trns *Transaction) IsValid(bc *Blockchain, tp *TransactionPool) bool {
-	if bc.GetBalance(string(trns.From), tp) < trns.Amount {
-		panic("Not enough funds for this transaction")
-	}
 	if string(trns.PubKeyBytes) != string(trns.From) {
 		panic("Not matching PubKeyBytes with From")
 	}
