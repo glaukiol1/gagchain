@@ -6,10 +6,11 @@ import (
 
 type Transaction struct {
 	Timestamp int
-	Input     []byte
-	Output    []byte
+	From      []byte
+	To        []byte
+	Amount    int
 }
 
-func NewTransactionInstance(input, output []byte) *Transaction {
-	return &Transaction{int(time.Now().Unix()), input, output}
+func NewTransactionInstance(from, to string, amount int) *Transaction {
+	return &Transaction{int(time.Now().Unix()), []byte(from), []byte(to), amount}
 }

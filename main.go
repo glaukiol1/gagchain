@@ -10,8 +10,8 @@ import (
 
 func main() {
 	chain := blockchain.InitBlockchain()
-	trns1 := blockchain.NewTransactionInstance([]byte("from:MINER_ADDRESS"), []byte("to:ad1"))
-	trns2 := blockchain.NewTransactionInstance([]byte("from:MINER_ADDRESS"), []byte("to:ad2"))
+	trns1 := blockchain.NewTransactionInstance("0xtest1", "0xtest2", 10000)
+	trns2 := blockchain.NewTransactionInstance("0xtest2", "0xtest3", 5000)
 	var arr1 []*blockchain.Transaction
 	chain.AddBlock(append(arr1, trns1, trns2))
 
@@ -22,14 +22,18 @@ func main() {
 		fmt.Printf("Hash: %x\n", block.Hash)
 
 		for _, trns := range block.Data {
-			fmt.Printf("Transaction Input: %s\n", trns.Input)
-			fmt.Printf("Transaction Output: %s\n", trns.Output)
+			fmt.Printf("Transaction From: %s\n", trns.From)
+			fmt.Printf("Transaction To: %s\n", trns.To)
+			fmt.Printf("Transaction Amount: %s\n", fmt.Sprint(trns.Amount))
 		}
 
 		pow := blockchain.NewProof(block)
 		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
 		fmt.Println("--------------------")
 	}
+	println("0xtest1 Balance: " + fmt.Sprint(chain.GetBalance("0xtest1")))
+	println("0xtest2 Balance: " + fmt.Sprint(chain.GetBalance("0xtest2")))
+	println("0xtest3 Balance: " + fmt.Sprint(chain.GetBalance("0xtest3")))
 
 	// db_location := "./db/db.db"
 	// dab := db.GetDB(db_location)

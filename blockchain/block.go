@@ -34,7 +34,7 @@ func CreateBlock(data []*Transaction, prevHash []byte, prevId int) *Block {
 }
 
 func GetGenesis() *Block {
-	var GenesisTransaction = &Transaction{int(time.Now().Unix()), []byte("from:x"), []byte("to:genesis")}
+	var GenesisTransaction = NewTransactionInstance("0xtest1", "0xtest2", 10000)
 	var x []*Transaction
 	return CreateBlock(append(x, GenesisTransaction), []byte{}, -1)
 }
