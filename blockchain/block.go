@@ -23,11 +23,11 @@ type Block struct {
 
 func (bc *Blockchain) AddBlock(data []*Transaction) {
 	prevBlock := bc.Blocks[len(bc.Blocks)-1]
-	new := CreateBlock(data, prevBlock.Hash, prevBlock.Id)
+	new := CreateBlock(data, prevBlock.Hash, prevBlock.Id, bc)
 	bc.Blocks = append(bc.Blocks, new)
 }
 
-func CreateBlock(data []*Transaction, prevHash []byte, prevId int) *Block {
+func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchain) *Block {
 	block := &Block{[]byte{}, data, prevHash, 0, prevId + 1, int(time.Now().Unix())}
 	pow := NewProof(block)
 	nonce, hash := pow.Run()
@@ -36,6 +36,7 @@ func CreateBlock(data []*Transaction, prevHash []byte, prevId int) *Block {
 	// make a function to validate transactions
 	// and out it of the block
 
+	block = ValidateBlock(block, bc)
 	block.Hash = hash
 	block.Nonce = nonce
 	return block
@@ -46,7 +47,8 @@ func GetGenesis() *Block {
 	var to string = "0x4390B0820B4257d8936759e5e043e91a1F9E0BeC" // to address
 	var GenesisTransaction = &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*public).Hex()), crypto.FromECDSAPub(public), []byte(to), 100000, []byte{}, [32]byte{}}
 	var x []*Transaction
-	return CreateBlock(append(x, GenesisTransaction), []byte{}, -1)
+	var b *Blockchain = &Blockchain{}
+	return CreateBlock(append(x, GenesisTransaction), []byte{}, -1, b)
 }
 
 func InitBlockchain() *Blockchain {

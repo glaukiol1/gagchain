@@ -4,8 +4,11 @@ import (
 	"crypto/ecdsa"
 	"crypto/sha256"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
@@ -19,7 +22,7 @@ type Transaction struct {
 	Hash        [32]byte
 }
 
-func (bc *Blockchain) NewTransactionInstance(from *ecdsa.PublicKey, to string, amount int, tp *TransactionPool) *Transaction {
+func (bc *Blockchain) NewTransactionInstance(from *ecdsa.PublicKey, to string, amount int) *Transaction {
 	return &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*from).Hex()), crypto.FromECDSAPub(from), []byte(to), amount, []byte{}, [32]byte{}}
 }
 
@@ -56,8 +59,11 @@ func (trns *Transaction) IsReady() bool {
 	return true
 }
 
-func (trns *Transaction) IsValid(bc *Blockchain, tp *TransactionPool) bool {
-	if string(trns.PubKeyBytes) != string(trns.From) {
+func (trns *Transaction) IsValid(tp *TransactionPool) bool {
+	hash := crypto.NewKeccakState()
+	hash.Write(trns.PubKeyBytes[1:])
+	println(string(trns.From), string(trns.To), fmt.Sprint(trns.Amount))
+	if strings.ToLower(hexutil.Encode(hash.Sum(nil)[12:])) != strings.ToLower(string(trns.From)) {
 		panic("Not matching PubKeyBytes with From")
 	}
 	return true
