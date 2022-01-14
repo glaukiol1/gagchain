@@ -3,7 +3,6 @@ package blockchain
 import (
 	"bytes"
 	"crypto/ecdsa"
-	"fmt"
 	"log"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -49,7 +48,7 @@ func sign(privateKey *ecdsa.PrivateKey, data string) []byte {
 	return signature
 }
 
-func VerifySign(publicKeyECDSA *ecdsa.PublicKey, signature []byte, dat string) {
+func VerifySign(publicKeyECDSA *ecdsa.PublicKey, signature []byte, dat string) bool {
 
 	publicKeyBytes := crypto.FromECDSAPub(publicKeyECDSA)
 
@@ -62,10 +61,10 @@ func VerifySign(publicKeyECDSA *ecdsa.PublicKey, signature []byte, dat string) {
 	}
 
 	matches := bytes.Equal(sigPublicKey, publicKeyBytes)
-	fmt.Println(matches) // true
+	return matches
 }
 
 func PrivateKeyToHex(privateKey *ecdsa.PrivateKey) string {
 	privateKeyBytes := crypto.FromECDSA(privateKey)
-	return hexutil.Encode(privateKeyBytes)[:]
+	return hexutil.Encode(privateKeyBytes)[2:]
 }

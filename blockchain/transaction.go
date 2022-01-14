@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"crypto/ecdsa"
 	"encoding/json"
 	"time"
 
@@ -8,19 +9,20 @@ import (
 )
 
 type Transaction struct {
-	Timestamp int
-	From      []byte
-	To        []byte
-	Amount    int
-	Signature []byte
+	Timestamp   int
+	From        []byte
+	PubKeyBytes []byte
+	To          []byte
+	Amount      int
+	Signature   []byte
 }
 
-func NewTransactionInstance(from, to string, amount int) *Transaction {
-	return &Transaction{int(time.Now().Unix()), []byte(from), []byte(to), amount, []byte{}}
+func NewTransactionInstance(from *ecdsa.PublicKey, to string, amount int) *Transaction {
+	return &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*from).Hex()), crypto.FromECDSAPub(from), []byte(to), amount, []byte{}}
 }
 
 func (trns *Transaction) GetTransactionJSON() string {
-	dat, err := json.Marshal(Transaction{trns.Timestamp, trns.From, trns.To, trns.Amount, []byte{}})
+	dat, err := json.Marshal(Transaction{trns.Timestamp, trns.From, trns.PubKeyBytes, trns.To, trns.Amount, []byte{}})
 	if err != nil {
 		panic(err)
 	}
@@ -34,4 +36,13 @@ func (trns *Transaction) Sign(privateHex string) {
 	}
 
 	trns.Signature = sign(privateKey, trns.GetTransactionJSON())
+}
+
+func (trns *Transaction) VerifySignature() bool {
+	publicKey, err := crypto.UnmarshalPubkey(trns.PubKeyBytes)
+	if err != nil {
+		panic(err)
+	}
+
+	return VerifySign(publicKey, trns.Signature, trns.GetTransactionJSON())
 }

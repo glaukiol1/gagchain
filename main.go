@@ -50,9 +50,10 @@ func main() {
 	// dat := bc.Blocks[0].Data
 	// fmt.Println(string(dat[0].Output)) // print the genesis block
 
-	trns2 := blockchain.NewTransactionInstance("0xtest2", "0xtest3", 5000)
 	pb, pk := blockchain.Keygen()
-	// pb1, _ := blockchain.Keygen()
-	fmt.Println(blockchain.PubkeyToAddress(pb))
+	trns2 := blockchain.NewTransactionInstance(pb, "0xtest3", 5000)
+	// pb1, pk1 := blockchain.Keygen()
+	fmt.Println("Public key: " + blockchain.PubkeyToAddress(pb))
 	trns2.Sign(blockchain.PrivateKeyToHex(pk))
+	println(trns2.VerifySignature())
 }
