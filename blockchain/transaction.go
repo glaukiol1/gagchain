@@ -59,6 +59,16 @@ func (trns *Transaction) IsReady() bool {
 	return true
 }
 
+func (trns *Transaction) IsValid(bc *Blockchain, tp *TransactionPool) bool {
+	if bc.GetBalance(string(trns.From), tp) < trns.Amount {
+		panic("Not enough funds for this transaction")
+	}
+	if string(trns.PubKeyBytes) != string(trns.From) {
+		panic("Not matching PubKeyBytes with From")
+	}
+	return true
+}
+
 func (trns *Transaction) MakeHash() [32]byte {
 	if len(trns.Signature) == 0 {
 		panic("Set-up transaction before calling MakeHash")

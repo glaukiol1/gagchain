@@ -13,13 +13,15 @@ func (bc *Blockchain) GetBalance(address string, tp *TransactionPool) int {
 		}
 	}
 	for _, trns := range tp.pool {
-		// TODO: make sure that the transaction is valid before adding to balance
-		if string(trns.To) == address {
-			balance += trns.Amount
+		if trns.IsReady() {
+			if string(trns.To) == address {
+				balance += trns.Amount
+			}
+			if string(trns.From) == address {
+				balance += -trns.Amount
+			}
 		}
-		if string(trns.From) == address {
-			balance += -trns.Amount
-		}
+
 	}
 	return balance
 }
