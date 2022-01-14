@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
@@ -32,7 +33,7 @@ func PubkeyToAddress(publicKeyECDSA *ecdsa.PublicKey) string {
 	return crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
 }
 
-func Sign(privateKey *ecdsa.PrivateKey, data string) []byte {
+func sign(privateKey *ecdsa.PrivateKey, data string) []byte {
 	// privateKey, err := crypto.HexToECDSA("fad9c8855b740a0b7ed4c221dbad0f33a83a49cad6b3fe8d5817ac83d38b6a19")
 	// if err != nil {
 	// log.Fatal(err)
@@ -62,4 +63,9 @@ func VerifySign(publicKeyECDSA *ecdsa.PublicKey, signature []byte, dat string) {
 
 	matches := bytes.Equal(sigPublicKey, publicKeyBytes)
 	fmt.Println(matches) // true
+}
+
+func PrivateKeyToHex(privateKey *ecdsa.PrivateKey) string {
+	privateKeyBytes := crypto.FromECDSA(privateKey)
+	return hexutil.Encode(privateKeyBytes)[:]
 }

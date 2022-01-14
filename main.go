@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/glaukiol1/gagchain/blockchain" // blockchain main module
@@ -55,7 +54,5 @@ func main() {
 	pb, pk := blockchain.Keygen()
 	// pb1, _ := blockchain.Keygen()
 	fmt.Println(blockchain.PubkeyToAddress(pb))
-	dat, _ := json.Marshal(trns2)
-	sign := blockchain.Sign(pk, string(dat))
-	blockchain.VerifySign(pb, sign, string(dat))
+	trns2.Sign(blockchain.PrivateKeyToHex(pk))
 }
