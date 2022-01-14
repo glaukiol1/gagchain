@@ -2,40 +2,48 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
-	"github.com/glaukiol1/gagchain/blockchain"
-	"github.com/glaukiol1/gagchain/db"
+	"github.com/glaukiol1/gagchain/blockchain" // blockchain main module
+	// custom database
 )
 
 func main() {
-	// chain := blockchain.InitBlockchain()
-	// chain.AddBlock("Block 1 jkanjfbhfbofuoiy41y3o12y41ou4y1u4yuOYUO$YOUY!OUIY$@UIO!Y$!OI$@!")
-	// chain.AddBlock("Block 2")
-	// chain.AddBlock("Block 3")
-	// for _, block := range chain.Blocks {
-	// 	fmt.Printf("Previous Hash: %x\n", block.PrevHash)
-	// 	fmt.Printf("Hash: %x\n", block.Hash)
-	// 	fmt.Printf("Data: %s\n", block.Data)
+	chain := blockchain.InitBlockchain()
+	trns1 := blockchain.NewTransactionInstance([]byte("from:MINER_ADDRESS"), []byte("to:ad1"))
+	trns2 := blockchain.NewTransactionInstance([]byte("from:MINER_ADDRESS"), []byte("to:ad2"))
+	var arr1 []*blockchain.Transaction
+	chain.AddBlock(append(arr1, trns1, trns2))
 
-	// 	pow := blockchain.NewProof(block)
-	// 	fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
-	// 	fmt.Println("--------------------")
-	// }
-	db_location := "./db/db.db"
-	dab := db.GetDB(db_location)
-	var v []*blockchain.Block
-	var bc *blockchain.Blockchain
-	if db.DB_DoesExist(db_location) {
-		v = dab.ParseDB()
-		bc = &blockchain.Blockchain{v} // ignore warning
-	} else {
-		bc = blockchain.InitBlockchain()
+	// var arr2 []*blockchain.Transaction
+	// chain.AddBlock(append(arr2, trns2))
+	for _, block := range chain.Blocks {
+		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
+		fmt.Printf("Hash: %x\n", block.Hash)
+
+		for _, trns := range block.Data {
+			fmt.Printf("Transaction Input: %s\n", trns.Input)
+			fmt.Printf("Transaction Output: %s\n", trns.Output)
+		}
+
+		pow := blockchain.NewProof(block)
+		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
+		fmt.Println("--------------------")
 	}
 
-	bc.AddBlock("Block 1")
-	dab.Write(bc.RequestChain())
+	// db_location := "./db/db.db"
+	// dab := db.GetDB(db_location)
+	// var v []*blockchain.Block
+	// var bc *blockchain.Blockchain
+	// if db.DB_DoesExist(db_location) {
+	// 	v = dab.ParseDB()
+	// 	bc = &blockchain.Blockchain{v} // ignore warning
+	// } else {
+	// 	bc = blockchain.InitBlockchain()
+	// }
 
-	// dab.UpdateDB()
+	// // dab.UpdateDB()
 
-	fmt.Println(string(bc.Blocks[len(bc.Blocks)-1].Data)) // print the genesis block
+	// dat := bc.Blocks[0].Data
+	// fmt.Println(string(dat[0].Output)) // print the genesis block
 }

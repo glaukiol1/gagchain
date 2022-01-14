@@ -2,27 +2,29 @@ package blockchain
 
 import "time"
 
+// TODO: Transactions
+// https://dev.to/freakcdev297/creating-transactions-mining-rewards-mint-and-gas-fee-5hhf
 type Blockchain struct {
 	Blocks []*Block //
 }
 
 type Block struct {
-	Hash      []byte //
-	Data      []byte //
-	PrevHash  []byte //
-	Nonce     int    //
-	Id        int    //
-	Timestamp int    //
+	Hash      []byte         //
+	Data      []*Transaction //
+	PrevHash  []byte         //
+	Nonce     int            //
+	Id        int            //
+	Timestamp int            //
 }
 
-func (bc *Blockchain) AddBlock(data string) {
+func (bc *Blockchain) AddBlock(data []*Transaction) {
 	prevBlock := bc.Blocks[len(bc.Blocks)-1]
 	new := CreateBlock(data, prevBlock.Hash, prevBlock.Id)
 	bc.Blocks = append(bc.Blocks, new)
 }
 
-func CreateBlock(data string, prevHash []byte, prevId int) *Block {
-	block := &Block{[]byte{}, []byte(data), prevHash, 0, prevId + 1, int(time.Now().Unix())}
+func CreateBlock(data []*Transaction, prevHash []byte, prevId int) *Block {
+	block := &Block{[]byte{}, data, prevHash, 0, prevId + 1, int(time.Now().Unix())}
 	pow := NewProof(block)
 	nonce, hash := pow.Run()
 
@@ -32,7 +34,9 @@ func CreateBlock(data string, prevHash []byte, prevId int) *Block {
 }
 
 func GetGenesis() *Block {
-	return CreateBlock("Genesis", []byte{}, -1)
+	var GenesisTransaction = &Transaction{int(time.Now().Unix()), []byte("from:x"), []byte("to:genesis")}
+	var x []*Transaction
+	return CreateBlock(append(x, GenesisTransaction), []byte{}, -1)
 }
 
 func InitBlockchain() *Blockchain {

@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math"
 	"math/big"
 )
 
-const Difficulty = 18 // miners on the network / more power
+const Difficulty = 2 // miners on the network / more power
 
 type ProofOfWork struct {
 	block  *Block
@@ -28,10 +29,14 @@ func NewProof(b *Block) *ProofOfWork {
 }
 
 func (pow *ProofOfWork) InitData(nonce int) []byte {
+	dat, err := json.Marshal(pow.block.Data)
+	if err != nil {
+		panic(err)
+	}
 	data := bytes.Join(
 		[][]byte{
 			pow.block.PrevHash,
-			pow.block.Data,
+			dat,
 			toHex(int64(nonce)),
 			toHex(int64(Difficulty)),
 		},
