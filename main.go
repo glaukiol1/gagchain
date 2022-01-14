@@ -41,14 +41,14 @@ func main() {
 	bc := blockchain.InitBlockchain()
 	tp := blockchain.NewTransactionPool()
 
-	pk, err := crypto.HexToECDSA("d2d9a9aa0fce4a8a1d3141300fa8a0c0087f7ae93dd396d5198381c440584361")
+	pk, err := crypto.HexToECDSA("d2d9a9aa0fce4a8a1d3141300fa8a0c0087f7ae93dd396d5198381c440584361") // 0x4390B0820B4257d8936759e5e043e91a1F9E0BeC
 	if err != nil {
 		panic(err)
 	}
 	pb := &pk.PublicKey
 	pb1, pk1 := blockchain.Keygen()
 	trns1 := bc.NewTransactionInstance(pb, blockchain.PubkeyToAddress(pb1), 5000)
-	trns1.Sign("d2d9a9aa0fce4a8a1d3141300fa8a0c0087f7ae93dd396d5198381c440584361")
+	trns1.Sign(blockchain.PrivateKeyToHex(pk))
 	tp.AddTransaction(trns1)
 	trns2 := bc.NewTransactionInstance(pb1, blockchain.PubkeyToAddress(pb), 90)
 	trns2.Sign(blockchain.PrivateKeyToHex(pk1))
