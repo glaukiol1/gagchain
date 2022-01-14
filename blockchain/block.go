@@ -1,6 +1,10 @@
 package blockchain
 
-import "time"
+import (
+	"time"
+
+	"github.com/ethereum/go-ethereum/crypto"
+)
 
 // TODO: Transactions
 // https://dev.to/freakcdev297/creating-transactions-mining-rewards-mint-and-gas-fee-5hhf
@@ -35,7 +39,8 @@ func CreateBlock(data []*Transaction, prevHash []byte, prevId int) *Block {
 
 func GetGenesis() *Block {
 	public, _ := Keygen()
-	var GenesisTransaction = NewTransactionInstance(public, "0xtest2", 10000)
+	var to string = "0x4390B0820B4257d8936759e5e043e91a1F9E0BeC" // to address
+	var GenesisTransaction = &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*public).Hex()), crypto.FromECDSAPub(public), []byte(to), 100000, []byte{}, [32]byte{}}
 	var x []*Transaction
 	return CreateBlock(append(x, GenesisTransaction), []byte{}, -1)
 }

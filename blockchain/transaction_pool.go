@@ -32,7 +32,7 @@ func (tp *TransactionPool) EditTransaction(transactionPos int, newTransaction *T
 func (tp *TransactionPool) MineTransactions() []*Transaction {
 	var blockData []*Transaction
 	if len(tp.pool) < MIN_transactions_in_block {
-		return []*Transaction{}
+		panic("Not enough transactions")
 	}
 	for i := 0; i < len(tp.pool); i++ {
 		trns := tp.pool[i]
@@ -49,5 +49,7 @@ func (tp *TransactionPool) MineTransactions() []*Transaction {
 			}
 		}
 	}
+	var a []*Transaction
+	tp.pool = a // empty the transaction pool
 	return blockData
 }

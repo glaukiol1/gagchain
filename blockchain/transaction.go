@@ -19,7 +19,10 @@ type Transaction struct {
 	Hash        [32]byte
 }
 
-func NewTransactionInstance(from *ecdsa.PublicKey, to string, amount int) *Transaction {
+func (bc *Blockchain) NewTransactionInstance(from *ecdsa.PublicKey, to string, amount int, tp *TransactionPool) *Transaction {
+	if bc.GetBalance(crypto.PubkeyToAddress(*from).Hex(), tp) < amount {
+		panic("Not enough funds to complete this transaction")
+	}
 	return &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*from).Hex()), crypto.FromECDSAPub(from), []byte(to), amount, []byte{}, [32]byte{}}
 }
 
