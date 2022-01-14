@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"crypto/ecdsa"
+	"crypto/sha256"
 	"encoding/json"
 	"time"
 
@@ -15,14 +16,15 @@ type Transaction struct {
 	To          []byte
 	Amount      int
 	Signature   []byte
+	Hash        [32]byte
 }
 
 func NewTransactionInstance(from *ecdsa.PublicKey, to string, amount int) *Transaction {
-	return &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*from).Hex()), crypto.FromECDSAPub(from), []byte(to), amount, []byte{}}
+	return &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*from).Hex()), crypto.FromECDSAPub(from), []byte(to), amount, []byte{}, [32]byte{}}
 }
 
 func (trns *Transaction) GetTransactionJSON() string {
-	dat, err := json.Marshal(Transaction{trns.Timestamp, trns.From, trns.PubKeyBytes, trns.To, trns.Amount, []byte{}})
+	dat, err := json.Marshal(Transaction{trns.Timestamp, trns.From, trns.PubKeyBytes, trns.To, trns.Amount, []byte{}, [32]byte{}})
 	if err != nil {
 		panic(err)
 	}
@@ -52,4 +54,16 @@ func (trns *Transaction) IsReady() bool {
 		return false
 	}
 	return true
+}
+
+func (trns *Transaction) MakeHash() [32]byte {
+	if len(trns.Signature) == 0 {
+		panic("Set-up transaction before calling MakeHash")
+	}
+	dat, err := json.Marshal(trns)
+	if err != nil {
+		panic(err)
+	}
+	trns.Hash = sha256.Sum256(dat)
+	return trns.Hash
 }

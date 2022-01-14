@@ -21,7 +21,7 @@ func NewTransactionPool() *TransactionPool {
 
 func (tp *TransactionPool) AddTransaction(transaction *Transaction) int {
 	pos := len(tp.pool) // same as len(tp.pool)-1+1
-	tp.pool[pos] = transaction
+	tp.pool = append(tp.pool, transaction)
 	return pos
 }
 
@@ -29,7 +29,7 @@ func (tp *TransactionPool) EditTransaction(transactionPos int, newTransaction *T
 	tp.pool[transactionPos] = newTransaction
 }
 
-func (tp *TransactionPool) MineTransactions(isMiningNode bool) []*Transaction {
+func (tp *TransactionPool) MineTransactions() []*Transaction {
 	var blockData []*Transaction
 	if len(tp.pool) < MIN_transactions_in_block {
 		return []*Transaction{}
@@ -44,6 +44,7 @@ func (tp *TransactionPool) MineTransactions(isMiningNode bool) []*Transaction {
 				fmt.Printf("Transaction %s has an invalid signature", trns.GetTransactionJSON())
 			} else {
 				// mine transaction
+				trns.MakeHash()
 				blockData = append(blockData, trns)
 			}
 		}
