@@ -3,6 +3,7 @@ package blockchain
 // ability to;
 // --- add transactions
 // --- mine transactions
+// --- edit transaction
 // --- --- Part of this is checking the signature
 // --- sort transactions (by gas fee)
 
@@ -14,4 +15,14 @@ type TransactionPool struct {
 
 func NewTransactionPool() *TransactionPool {
 	return &TransactionPool{}
+}
+
+func (tp *TransactionPool) AddTransaction(transaction *Transaction) int {
+	pos := len(tp.pool) // same as len(tp.pool)-1+1
+	tp.pool[pos] = transaction
+	return pos
+}
+
+func (tp *TransactionPool) EditTransactoin(transactionPos int, newTransaction *Transaction) {
+	tp.pool[transactionPos] = newTransaction
 }
