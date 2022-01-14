@@ -23,6 +23,6 @@ func (tp *TransactionPool) AddTransaction(transaction *Transaction) int {
 	return pos
 }
 
-func (tp *TransactionPool) EditTransactoin(transactionPos int, newTransaction *Transaction) {
+func (tp *TransactionPool) EditTransaction(transactionPos int, newTransaction *Transaction) {
 	tp.pool[transactionPos] = newTransaction
 }
