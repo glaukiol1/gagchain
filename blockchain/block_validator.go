@@ -17,5 +17,4 @@ func ValidateBlock(block *Block, bc *Blockchain) *Block {
 		newBlock.Data = newTransactions
 		return newBlock
 	}
-
 }

@@ -11,8 +11,6 @@ import (
 	"math/big"
 )
 
-const Difficulty = 2 // miners on the network / more power
-
 type ProofOfWork struct {
 	block  *Block
 	target *big.Int
@@ -73,12 +71,13 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 
 func (pow *ProofOfWork) Validate() bool {
 	var intHash big.Int
-
 	data := pow.InitData(pow.block.Nonce)
 
 	hash := sha256.Sum256(data)
 	intHash.SetBytes(hash[:])
-
+	if pow.block.Id == 0 {
+		return true
+	}
 	return intHash.Cmp(pow.target) == -1
 }
 

@@ -21,34 +21,53 @@ type Block struct {
 	Timestamp int            //
 }
 
-func (bc *Blockchain) AddBlock(data []*Transaction) {
+func (bc *Blockchain) AddBlock(data []*Transaction, hash []byte, nonce int) {
 	prevBlock := bc.Blocks[len(bc.Blocks)-1]
-	new := CreateBlock(data, prevBlock.Hash, prevBlock.Id, bc)
+	new := CreateBlock(data, prevBlock.Hash, prevBlock.Id, bc, hash, nonce)
 	bc.Blocks = append(bc.Blocks, new)
 }
 
-func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchain) *Block {
-	block := &Block{[]byte{}, data, prevHash, 0, prevId + 1, int(time.Now().Unix())}
-	pow := NewProof(block)
-	nonce, hash := pow.Run()
+func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchain, _Hash []byte, _Nonce int) *Block {
+	block := &Block{_Hash, data, prevHash, _Nonce, prevId + 1, int(time.Now().Unix())}
 
 	// check for invalid transactions here
 	// make a function to validate transactions
 	// and out it of the block
+	if block.Id == 0 {
+		return block
+	}
+	if Mining_Node {
+		block = ValidateBlock(block, bc)
+		pow := NewProof(block)
+		nonce, hash := pow.Run()
+		block.Hash = hash
+		block.Nonce = nonce
+		return block
+	} else {
+		block = ValidateBlock(block, bc)
+		block.Hash = _Hash
+		block.Nonce = _Nonce
+		pow := NewProof(block)
+		if !pow.Validate() {
+			panic("invalid block")
+		} else {
+			return block
+		}
+	}
 
-	block = ValidateBlock(block, bc)
-	block.Hash = hash
-	block.Nonce = nonce
-	return block
 }
 
 func GetGenesis() *Block {
-	public, _ := Keygen()
-	var to string = "0x4390B0820B4257d8936759e5e043e91a1F9E0BeC" // to address
+	var to string = "0x4390B0820B4257d8936759e5e043e91a1F9E0BeC"
+	pk, err := crypto.HexToECDSA(MintAddress.privateHex)
+	if err != nil {
+		panic(err)
+	}
+	public := &pk.PublicKey
 	var GenesisTransaction = &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*public).Hex()), crypto.FromECDSAPub(public), []byte(to), 100000, []byte{}, [32]byte{}}
 	var x []*Transaction
 	var b *Blockchain = &Blockchain{}
-	return CreateBlock(append(x, GenesisTransaction), []byte{}, -1, b)
+	return CreateBlock(append(x, GenesisTransaction), []byte{}, -1, b, []byte{0, 51, 41, 137, 226, 186, 51, 241, 223, 156, 196, 209, 100, 178, 82, 125, 199, 145, 33, 164, 28, 94, 158, 96, 136, 41, 85, 104, 4, 183, 219, 23}, 113)
 }
 
 func InitBlockchain() *Blockchain {
