@@ -45,6 +45,9 @@ func (bc *Blockchain) AddRewardTransaction(block *Block) {
 // todo: add a *Block.isValid() function
 
 func (block *Block) IsValid(bc *Blockchain) bool {
+	if block.Id == 0 {
+		return true // change this, security issue
+	}
 	if !(len(fmt.Sprintf("%x", block.Hash)) == 64) {
 		println("Hash is wrong size")
 		return false
@@ -62,10 +65,12 @@ func (block *Block) IsValid(bc *Blockchain) bool {
 					println("Block timestamp is incorrect")
 					return false
 				} else {
-					if block.Id != len(bc.Blocks) {
+					if block.Id != len(bc.Blocks)-1 {
+						println("Block ID is wrong")
 						return false
 					} else {
-						if string(block.PrevHash) != string(bc.Blocks[len(bc.Blocks)-1].Hash) {
+						if string(block.PrevHash) != string(bc.Blocks[block.Id-1].Hash) {
+							println("Block PrevHash is wrong")
 							return false
 						}
 					}

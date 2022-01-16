@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -39,10 +40,7 @@ func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchai
 	// check for invalid transactions here
 	// make a function to validate transactions
 	// and out it of the block
-	if block.Id == 0 {
-		return block, nil
-	}
-	var invalidBlockError error = errors.New("Invalid Block")
+	var invalidBlockError error = errors.New("Invalid Block #" + fmt.Sprint(block.Id))
 	if Mining_Node && block.Miner == "" {
 		block, err = ValidateBlock(block, bc)
 		if err != nil {
@@ -67,6 +65,11 @@ func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchai
 		block.Hash = _Hash
 		block.Nonce = _Nonce
 		pow := NewProof(block)
+		if block.Id == 0 {
+			nonce, hash := pow.Run()
+			block.Nonce = nonce
+			block.Hash = hash
+		}
 		if !pow.Validate() || !block.IsValid(bc) {
 			return nil, invalidBlockError
 		} else {
@@ -84,11 +87,12 @@ func GetGenesis() *Block {
 	GenesisTransaction.MakeHash()
 	var x []*Transaction
 	var b *Blockchain = &Blockchain{}
-	rtrn, err := CreateBlock(append(x, GenesisTransaction), []byte{}, -1, b, []byte{0, 51, 41, 137, 226, 186, 51, 241, 223, 156, 196, 209, 100, 178, 82, 125, 199, 145, 33, 164, 28, 94, 158, 96, 136, 41, 85, 104, 4, 183, 219, 23}, 113, "")
+	block, err := CreateBlock(append(x, GenesisTransaction), []byte{}, -1, b, []byte{}, 113, "")
+
 	if err != nil {
 		panic(err)
 	}
-	return rtrn
+	return block
 }
 
 func InitBlockchain() *Blockchain {
