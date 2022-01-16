@@ -23,3 +23,5 @@ func (bc *Blockchain) AddRewardTransaction(block *Block) {
 	rewardTransaction := bc.NewTransactionInstance(MintAddress.publicKey, block.Miner, Reward)
 	block.Data = append(block.Data, rewardTransaction)
 }
+
+// todo: add a *Block.isValid() function
