@@ -59,7 +59,7 @@ func (trns *Transaction) IsReady() bool {
 	return true
 }
 
-func (trns *Transaction) IsValid(tp *TransactionPool) bool {
+func (trns *Transaction) IsValid() bool {
 	hash := crypto.NewKeccakState()
 	hash.Write(trns.PubKeyBytes[1:])
 	println(string(trns.From), string(trns.To), fmt.Sprint(trns.Amount))
