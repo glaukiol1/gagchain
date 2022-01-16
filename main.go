@@ -60,7 +60,7 @@ func main() {
 
 	tp.AddTransaction(trns2)
 	var block blockchain.Block
-	err__ := json.Unmarshal([]byte("{\"Hash\":\"AACyiNCCbz4fHFWdWI9RShJunaZ5ohq4+1d0CAvFIxE=\",\"Data\":[{\"Timestamp\":1642285597,\"From\":\"MHg0MzkwQjA4MjBCNDI1N2Q4OTM2NzU5ZTVlMDQzZTkxYTFGOUUwQmVD\",\"PubKeyBytes\":\"BFCmDAdKl+jh1gQhh51gLAsXau2R9pF8t5phzvDRoQ7wVfuDnl8G5KL6kzQbABud6Pydqxzb92L5xPt3yKmIhMk=\",\"To\":\"MHg0MzE1MzFlMTI5MDBCM0IyNjI3YzM3YzMyOWQ2MDJiNzREMDlkM0JC\",\"Amount\":5000,\"Signature\":\"ePysGH1pEEMyknLNsOhhbVfKMTSd2MBgAl/Ir0mKSegJPMihoa+vXXVJP63wfzMTLnwreRR+bHK5Jh3bpNQuRAE=\",\"Hash\":[227,175,196,103,247,165,242,108,65,176,79,223,30,77,235,133,161,59,6,135,74,39,91,217,66,46,3,10,89,51,171,5]},{\"Timestamp\":1642285597,\"From\":\"MHg0MzE1MzFlMTI5MDBCM0IyNjI3YzM3YzMyOWQ2MDJiNzREMDlkM0JC\",\"PubKeyBytes\":\"BIl57r1Hl5cEg7xy1p31TVpDeCevWk8P+l4luTabhwVJoj0zJlnHnzqUmGM/ljbceoosTFGDu92PwXAZGhyjpWU=\",\"To\":\"MHg0MzkwQjA4MjBCNDI1N2Q4OTM2NzU5ZTVlMDQzZTkxYTFGOUUwQmVD\",\"Amount\":90,\"Signature\":\"+3hflJRQJYcmP8vApELFVTuv51noxb0gf3DWSN4mINV8Yy6LDd8DcvUQ377tOvLSBa2zMlH+rV85c9hTX+VaVAA=\",\"Hash\":[73,161,170,213,39,210,244,143,114,23,165,220,48,117,9,100,49,6,32,126,251,139,178,126,126,194,158,3,226,109,2,234]}],\"PrevHash\":\"ADMpieK6M/HfnMTRZLJSfceRIaQcXp5giClVaAS32xc=\",\"Nonce\":27330,\"Id\":1,\"Timestamp\":1642285597}"), &block)
+	err__ := json.Unmarshal([]byte("{\"Hash\":\"AACyiNCCbz4fHFWdWI9RShJunaZ5ohq4+1d0CAvFIxE=\",\"Data\":[{\"Timestamp\":1642285597,\"From\":\"MHg0MzkwQjA4MjBCNDI1N2Q4OTM2NzU5ZTVlMDQzZTkxYTFGOUUwQmVD\",\"PubKeyBytes\":\"BFCmDAdKl+jh1gQhh51gLAsXau2R9pF8t5phzvDRoQ7wVfuDnl8G5KL6kzQbABud6Pydqxzb92L5xPt3yKmIhMk=\",\"To\":\"MHg0MzE1MzFlMTI5MDBCM0IyNjI3YzM3YzMyOWQ2MDJiNzREMDlkM0JC\",\"Amount\":5000,\"Signature\":\"ePysGH1pEEMyknLNsOhhbVfKMTSd2MBgAl/Ir0mKSegJPMihoa+vXXVJP63wfzMTLnwreRR+bHK5Jh3bpNQuRAE=\",\"Hash\":[227,175,196,103,247,165,242,108,65,176,79,223,30,77,235,133,161,59,6,135,74,39,91,217,66,46,3,10,89,51,171,5]},{\"Timestamp\":1642285597,\"From\":\"MHg0MzE1MzFlMTI5MDBCM0IyNjI3YzM3YzMyOWQ2MDJiNzREMDlkM0JC\",\"PubKeyBytes\":\"BIl57r1Hl5cEg7xy1p31TVpDeCevWk8P+l4luTabhwVJoj0zJlnHnzqUmGM/ljbceoosTFGDu92PwXAZGhyjpWU=\",\"To\":\"MHg0MzkwQjA4MjBCNDI1N2Q4OTM2NzU5ZTVlMDQzZTkxYTFGOUUwQmVD\",\"Amount\":90,\"Signature\":\"+3hflJRQJYcmP8vApELFVTuv51noxb0gf3DWSN4mINV8Yy6LDd8DcvUQ377tOvLSBa2zMlH+rV85c9hTX+VaVAA=\",\"Hash\":[73,161,170,213,39,210,244,143,114,23,165,220,48,117,9,100,49,6,32,126,251,139,178,126,126,194,158,3,226,109,2,234]}],\"PrevHash\":\"ADMpieK6M/HfnMTRZLJSfceRIaQcXp5giClVaAS32xc=\",\"Nonce\":27330,\"Id\":1,\"Timestamp\":1642285597,\"Miner\":\"\"}"), &block)
 	// example block
 	// that mightve came from another node
 	// and then when added to the local blockchain, it would check
@@ -69,12 +69,13 @@ func main() {
 		panic(err__)
 	}
 	fmt.Printf("%x\n", block.Hash)
-	bc.AddBlock(block.Data, block.Hash, block.Nonce)
+	bc.AddBlock(block.Data, block.Hash, block.Nonce, block.Miner)
 
 	for _, block := range bc.Blocks {
 		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
 		fmt.Printf("Hash: %x\n", block.Hash)
 		fmt.Printf("Nonce: %s\n", fmt.Sprint(block.Nonce))
+		fmt.Printf("Miner: %s\n", block.Miner)
 		for _, trns := range block.Data {
 			fmt.Printf("Transaction From: %s\n", trns.From)
 			fmt.Printf("Transaction To: %s\n", trns.To)
