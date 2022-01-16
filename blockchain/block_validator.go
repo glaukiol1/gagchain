@@ -7,12 +7,23 @@ func ValidateBlock(block *Block, bc *Blockchain) *Block {
 		oldTransactions := block.Data
 		var newTransactions []*Transaction // these are verified
 		newBlock := &Block{[]byte{}, newTransactions, block.PrevHash, -1, block.Id, block.Timestamp, block.Miner}
+		hasMintAddressTransaction := false
 		for _, oldTrns := range oldTransactions {
-			if oldTrns.IsValid() && oldTrns.IsReady() && !(bc.GetBalance(string(oldTrns.From), &TransactionPool{newTransactions /* this is safe, since {newTransaction} is only verified transactions */}) < oldTrns.Amount) && oldTrns.VerifySignature() {
+			if string(oldTrns.From) == PubkeyToAddress(MintAddress.publicKey) {
+				println("found reward transaction.")
 				newTransactions = append(newTransactions, oldTrns)
+				if hasMintAddressTransaction {
+					panic("Found two transactions from MintAddress in the same blocl")
+				}
+				hasMintAddressTransaction = true
 			} else {
-				println("Invalid transaction")
+				if oldTrns.IsValid() && oldTrns.IsReady() && !(bc.GetBalance(string(oldTrns.From), &TransactionPool{newTransactions /* this is safe, since {newTransaction} is only verified transactions */}) < oldTrns.Amount) && oldTrns.VerifySignature() {
+					newTransactions = append(newTransactions, oldTrns)
+				} else {
+					println("Invalid transaction")
+				}
 			}
+
 		}
 		newBlock.Data = newTransactions
 		return newBlock
@@ -21,6 +32,8 @@ func ValidateBlock(block *Block, bc *Blockchain) *Block {
 
 func (bc *Blockchain) AddRewardTransaction(block *Block) {
 	rewardTransaction := bc.NewTransactionInstance(MintAddress.publicKey, block.Miner, Reward)
+	rewardTransaction.Sign(PrivateKeyToHex(MintAddress.privateKey))
+	rewardTransaction.MakeHash()
 	block.Data = append(block.Data, rewardTransaction)
 }
 

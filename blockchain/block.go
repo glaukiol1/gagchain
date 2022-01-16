@@ -39,11 +39,12 @@ func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchai
 	}
 	if Mining_Node && block.Miner == "" {
 		block = ValidateBlock(block, bc)
+		block.Miner = MyAddress.publicAddress
+		bc.AddRewardTransaction(block)
 		pow := NewProof(block)
 		nonce, hash := pow.Run()
 		block.Hash = hash
 		block.Nonce = nonce
-		block.Miner = MyAddress.publicAddress
 		return block
 	} else {
 		block = ValidateBlock(block, bc)
