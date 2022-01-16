@@ -46,7 +46,7 @@ func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchai
 		if err != nil {
 			return nil, err
 		}
-		block.Miner = MyAddress.publicAddress
+		block.Miner = MyAddress.PublicAddress
 		bc.AddRewardTransaction(block)
 		pow := NewProof(block)
 		nonce, hash := pow.Run()

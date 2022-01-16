@@ -63,8 +63,8 @@ func (block *Block) IsValid(bc *Blockchain) bool {
 					println("Block timestamp is incorrect")
 					return false
 				} else {
-					if block.Id != len(bc.Blocks)-1 {
-						println("Block ID is wrong")
+					if block.Id != len(bc.Blocks[:block.Id]) {
+						println("Block ID is wrong ", len(bc.Blocks[:block.Id]), block.Id)
 						return false
 					} else {
 						if string(block.PrevHash) != string(bc.Blocks[block.Id-1].Hash) {
@@ -74,6 +74,17 @@ func (block *Block) IsValid(bc *Blockchain) bool {
 							if block.Miner != string(block.Data[len(block.Data)-1].To) {
 								println("Block Miner is incorrect")
 								return false
+							} else {
+								hasMintTransaction := false
+								for _, trns := range block.Data {
+									if string(trns.From) == PubkeyToAddress(MintAddress.publicKey) {
+										if hasMintTransaction {
+											println("More than one MintAddress transaction")
+											return false
+										}
+										hasMintTransaction = true
+									}
+								}
 							}
 						}
 					}

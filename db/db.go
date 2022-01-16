@@ -33,9 +33,9 @@ func (db *DB) Write(data string) {
 }
 
 func (db *DB) ParseDB() []*blockchain.Block {
-	var v []*blockchain.Block
+	var v *blockchain.Blockchain
 	json.Unmarshal([]byte(db.GetContents()), &v)
-	return v
+	return v.Blocks
 }
 
 func GetDB(location string) DB {
