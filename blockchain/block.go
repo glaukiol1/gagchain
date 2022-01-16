@@ -80,6 +80,8 @@ func GetGenesis() *Block {
 	var to string = "0x4390B0820B4257d8936759e5e043e91a1F9E0BeC"
 	public := MintAddress.publicKey
 	var GenesisTransaction = &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*public).Hex()), crypto.FromECDSAPub(public), []byte(to), 100000, []byte{}, [32]byte{}}
+	GenesisTransaction.Sign(PrivateKeyToHex(MintAddress.privateKey))
+	GenesisTransaction.MakeHash()
 	var x []*Transaction
 	var b *Blockchain = &Blockchain{}
 	rtrn, err := CreateBlock(append(x, GenesisTransaction), []byte{}, -1, b, []byte{0, 51, 41, 137, 226, 186, 51, 241, 223, 156, 196, 209, 100, 178, 82, 125, 199, 145, 33, 164, 28, 94, 158, 96, 136, 41, 85, 104, 4, 183, 219, 23}, 113, "")
