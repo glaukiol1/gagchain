@@ -1,8 +1,14 @@
 package blockchain
 
-func ValidateBlock(block *Block, bc *Blockchain) *Block {
+import (
+	"errors"
+	"fmt"
+)
+
+func ValidateBlock(block *Block, bc *Blockchain) (*Block, error) {
+	var twoMintAddressTransactionsError = errors.New("Two transactions from MintAddress in the same block")
 	if block.Id == 0 { // if the block is the genesis block
-		return block
+		return block, nil
 	} else {
 		oldTransactions := block.Data
 		var newTransactions []*Transaction // these are verified
@@ -10,10 +16,9 @@ func ValidateBlock(block *Block, bc *Blockchain) *Block {
 		hasMintAddressTransaction := false
 		for _, oldTrns := range oldTransactions {
 			if string(oldTrns.From) == PubkeyToAddress(MintAddress.publicKey) {
-				println("found reward transaction.")
 				newTransactions = append(newTransactions, oldTrns)
 				if hasMintAddressTransaction {
-					panic("Found two transactions from MintAddress in the same blocl")
+					return nil, twoMintAddressTransactionsError
 				}
 				hasMintAddressTransaction = true
 			} else {
@@ -26,7 +31,7 @@ func ValidateBlock(block *Block, bc *Blockchain) *Block {
 
 		}
 		newBlock.Data = newTransactions
-		return newBlock
+		return newBlock, nil
 	}
 }
 
@@ -38,3 +43,35 @@ func (bc *Blockchain) AddRewardTransaction(block *Block) {
 }
 
 // todo: add a *Block.isValid() function
+
+func (block *Block) IsValid(bc *Blockchain) bool {
+	if !(len(fmt.Sprintf("%x", block.Hash)) == 64) {
+		println("Hash is wrong size")
+		return false
+	} else {
+		if block.Miner == "" {
+			println("Miner is blank")
+			return false
+		} else {
+			pow := NewProof(block)
+			if !pow.Validate() {
+				println("PoW validation failed")
+				return false
+			} else {
+				if block.Timestamp < (bc.Blocks[block.Id-1].Timestamp) {
+					println("Block timestamp is incorrect")
+					return false
+				} else {
+					if block.Id != len(bc.Blocks) {
+						return false
+					} else {
+						if string(block.PrevHash) != string(bc.Blocks[len(bc.Blocks)-1].Hash) {
+							return false
+						}
+					}
+				}
+			}
+		}
+	}
+	return true
+}

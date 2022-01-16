@@ -29,7 +29,7 @@ var pk, _ = crypto.HexToECDSA("d2d9a9aa0fce4a8a1d3141300fa8a0c0087f7ae93dd396d51
 var pb = &pk.PublicKey
 var MyAddress = myAddress{pk, pb, PubkeyToAddress(pb)}
 
-const Mining_Node = false
+const Mining_Node = true
 
 const Reward = 100
 

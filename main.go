@@ -90,8 +90,8 @@ func main() {
 		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
 		fmt.Println("--------------------")
 	}
-	dat, err := json.Marshal(bc.Blocks[1])
-	fmt.Print(string(dat))
+	// dat, err := json.Marshal(bc.Blocks[1])
+	// fmt.Print(string(dat))
 	println(bc.GetBalance(blockchain.PubkeyToAddress(pb), tp),
 		bc.GetBalance(blockchain.PubkeyToAddress(pb1), tp))
 }

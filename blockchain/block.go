@@ -1,6 +1,8 @@
 package blockchain
 
 import (
+	"errors"
+	"log"
 	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
@@ -24,37 +26,51 @@ type Block struct {
 
 func (bc *Blockchain) AddBlock(data []*Transaction, hash []byte, nonce int, Miner string) {
 	prevBlock := bc.Blocks[len(bc.Blocks)-1]
-	new := CreateBlock(data, prevBlock.Hash, prevBlock.Id, bc, hash, nonce, Miner)
+	new, err := CreateBlock(data, prevBlock.Hash, prevBlock.Id, bc, hash, nonce, Miner)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	bc.Blocks = append(bc.Blocks, new)
 }
 
-func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchain, _Hash []byte, _Nonce int, Miner string) *Block {
+func CreateBlock(data []*Transaction, prevHash []byte, prevId int, bc *Blockchain, _Hash []byte, _Nonce int, Miner string) (blck *Block, err error) {
 	block := &Block{_Hash, data, prevHash, _Nonce, prevId + 1, int(time.Now().Unix()), Miner}
 
 	// check for invalid transactions here
 	// make a function to validate transactions
 	// and out it of the block
 	if block.Id == 0 {
-		return block
+		return block, nil
 	}
+	var invalidBlockError error = errors.New("Invalid Block")
 	if Mining_Node && block.Miner == "" {
-		block = ValidateBlock(block, bc)
+		block, err = ValidateBlock(block, bc)
+		if err != nil {
+			return nil, err
+		}
 		block.Miner = MyAddress.publicAddress
 		bc.AddRewardTransaction(block)
 		pow := NewProof(block)
 		nonce, hash := pow.Run()
 		block.Hash = hash
 		block.Nonce = nonce
-		return block
+		if block.IsValid(bc) {
+			return block, nil
+		} else {
+			return nil, invalidBlockError
+		}
 	} else {
-		block = ValidateBlock(block, bc)
+		block, err = ValidateBlock(block, bc)
+		if err != nil {
+			return nil, err
+		}
 		block.Hash = _Hash
 		block.Nonce = _Nonce
 		pow := NewProof(block)
-		if !pow.Validate() {
-			panic("invalid block")
+		if !pow.Validate() || !block.IsValid(bc) {
+			return nil, invalidBlockError
 		} else {
-			return block
+			return block, nil
 		}
 	}
 
@@ -66,7 +82,11 @@ func GetGenesis() *Block {
 	var GenesisTransaction = &Transaction{int(time.Now().Unix()), []byte(crypto.PubkeyToAddress(*public).Hex()), crypto.FromECDSAPub(public), []byte(to), 100000, []byte{}, [32]byte{}}
 	var x []*Transaction
 	var b *Blockchain = &Blockchain{}
-	return CreateBlock(append(x, GenesisTransaction), []byte{}, -1, b, []byte{0, 51, 41, 137, 226, 186, 51, 241, 223, 156, 196, 209, 100, 178, 82, 125, 199, 145, 33, 164, 28, 94, 158, 96, 136, 41, 85, 104, 4, 183, 219, 23}, 113, "")
+	rtrn, err := CreateBlock(append(x, GenesisTransaction), []byte{}, -1, b, []byte{0, 51, 41, 137, 226, 186, 51, 241, 223, 156, 196, 209, 100, 178, 82, 125, 199, 145, 33, 164, 28, 94, 158, 96, 136, 41, 85, 104, 4, 183, 219, 23}, 113, "")
+	if err != nil {
+		panic(err)
+	}
+	return rtrn
 }
 
 func InitBlockchain() *Blockchain {
