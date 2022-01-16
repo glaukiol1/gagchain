@@ -42,8 +42,6 @@ func (bc *Blockchain) AddRewardTransaction(block *Block) {
 	block.Data = append(block.Data, rewardTransaction)
 }
 
-// todo: add a *Block.isValid() function
-
 func (block *Block) IsValid(bc *Blockchain) bool {
 	if block.Id == 0 {
 		return true // change this, security issue
@@ -72,6 +70,11 @@ func (block *Block) IsValid(bc *Blockchain) bool {
 						if string(block.PrevHash) != string(bc.Blocks[block.Id-1].Hash) {
 							println("Block PrevHash is wrong")
 							return false
+						} else {
+							if block.Miner != string(block.Data[len(block.Data)-1].To) {
+								println("Block Miner is incorrect")
+								return false
+							}
 						}
 					}
 				}
