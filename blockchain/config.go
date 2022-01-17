@@ -33,4 +33,6 @@ const Mining_Node = true
 
 const Reward = 100
 
+const MyIP = "127.0.0.1" // change this
+
 var Difficulty = 15 // miners on the network / more power
