@@ -6,22 +6,24 @@ import (
 	"net"
 )
 
-func BroadcastMessage(message, host string) {
+func BroadcastMessage(message string, hosts []string) {
 	// connect to the selected node
 	// send the message
 	// selected node passes the message along.
 
-	sendMessage(message, host)
+	sendMessage(message, hosts)
 }
 
-func sendMessage(message, host string) {
-	CONNECT := host
-	c, err := net.Dial("tcp", CONNECT)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+func sendMessage(message string, hosts []string) {
+	for _, host := range hosts {
+		CONNECT := host
+		c, err := net.Dial("tcp", CONNECT)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-	c.Write([]byte(message + "\n"))
-	bufio.NewReader(c).ReadString('\n')
+		c.Write([]byte(message + "\n"))
+		bufio.NewReader(c).ReadString('\n')
+	}
 }
