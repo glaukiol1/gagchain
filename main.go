@@ -80,9 +80,17 @@ func main() {
 	// fmt.Print(string(dat))
 	println(bc.GetBalance(blockchain.PubkeyToAddress(blockchain.MyAddress.PublicKey), tp),
 		bc.GetBalance(blockchain.PubkeyToAddress(pb1), tp))
-	go com.StartHandler()
-	time.Sleep(1 * time.Second)
+	c := make(chan string)
+	go func() {
+		com.StartHandler()
+		c <- "one"
+	}()
+	com.AddNewNode(":8888")
+	time.Sleep(5 * time.Second)
 	com.BroadcastMessage(com.MAKE_TYPE_HANDSHAKE("127"))
 	for {
+		time.Sleep(5 * time.Second)
+		println(com.Nodes[0], com.Nodes[1])
 	}
+
 }
