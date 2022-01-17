@@ -53,3 +53,9 @@ New Transaction;
 ```go
 (*blockchain.Blockchain).NewTransactionInstance(from *ecdsa.PublicKey, to string, amount int)
 ```
+
+Mine Transactions from Transaction Pool;
+
+```go
+(*blockchain.TransactionPool).MineTransactions()
+```
