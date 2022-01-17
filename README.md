@@ -7,7 +7,8 @@ Experimental blockchain built in Golang. It is still under development and featu
 - Custom TCP server for communication with nodes
 - Custom Database built only to store the current chain
 - Custom communication messages to communicate with other nodes
-- Built to only communicate to one trusted node, and that node has another trusted node. This cycle continues
+- Verifying node authenticity by its address
+- Concurrency
 - Easy to compile and run
 
 ## Using this for your own blockchain project
