@@ -81,7 +81,6 @@ func main() {
 	println(bc.GetBalance(blockchain.PubkeyToAddress(blockchain.MyAddress.PublicKey), tp),
 		bc.GetBalance(blockchain.PubkeyToAddress(pb1), tp))
 	com.StartHandler()
-	time.Sleep(1 * time.Second)
 	com.BroadcastMessage(com.MAKE_TYPE_HANDSHAKE("127"))
 	for {
 		time.Sleep(1 * time.Second)
