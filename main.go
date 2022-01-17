@@ -82,7 +82,7 @@ func main() {
 		bc.GetBalance(blockchain.PubkeyToAddress(pb1), tp))
 	go com.StartHandler()
 	time.Sleep(1 * time.Second)
-	com.BroadcastMessage(com.MAKE_TYPE_HANDSHAKE("127"), []string{"127.0.0.1:8888"})
+	com.BroadcastMessage(com.MAKE_TYPE_HANDSHAKE("127"))
 	for {
 	}
 }

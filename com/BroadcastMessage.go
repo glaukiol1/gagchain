@@ -6,11 +6,11 @@ import (
 	"net"
 )
 
-func BroadcastMessage(message string, hosts []string) {
+func BroadcastMessage(message string) {
 	// connect to the selected node
 	// send the message
 	// selected node passes the message along.
-	sendMessage(message, hosts)
+	sendMessage(message, Nodes)
 }
 
 func sendMessage(message string, hosts []string) {
