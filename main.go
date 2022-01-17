@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
+	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/glaukiol1/gagchain/blockchain"
+	"github.com/glaukiol1/gagchain/com"
 	"github.com/glaukiol1/gagchain/db"
 	// custom database
 )
@@ -56,28 +56,33 @@ func main() {
 	// tp.AddTransaction(trns2)
 	// bc.AddBlock(tp.MineTransactions(), []byte{}, -1, "")
 
-	for _, block := range bc.Blocks {
-		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
-		fmt.Printf("Hash: %x\n", block.Hash)
-		fmt.Printf("Nonce: %s\n", fmt.Sprint(block.Nonce))
-		fmt.Printf("Miner: %s\n", block.Miner)
-		fmt.Printf("Valid: %s\n", strconv.FormatBool(block.IsValid(bc)))
-		for _, trns := range block.Data {
-			fmt.Printf("Transaction From: %s\n", trns.From)
-			fmt.Printf("Transaction To: %s\n", trns.To)
-			fmt.Printf("Transaction Amount: %s\n", fmt.Sprint(trns.Amount))
-			fmt.Printf("Transaction Hash: %x\n", trns.Hash)
-			if block.Id != 0 {
-				fmt.Printf("Transaction Successfully Signed: %s\n", fmt.Sprint(trns.VerifySignature()))
-			}
-		}
+	// for _, block := range bc.Blocks {
+	// 	fmt.Printf("Previous Hash: %x\n", block.PrevHash)
+	// 	fmt.Printf("Hash: %x\n", block.Hash)
+	// 	fmt.Printf("Nonce: %s\n", fmt.Sprint(block.Nonce))
+	// 	fmt.Printf("Miner: %s\n", block.Miner)
+	// 	fmt.Printf("Valid: %s\n", strconv.FormatBool(block.IsValid(bc)))
+	// 	for _, trns := range block.Data {
+	// 		fmt.Printf("Transaction From: %s\n", trns.From)
+	// 		fmt.Printf("Transaction To: %s\n", trns.To)
+	// 		fmt.Printf("Transaction Amount: %s\n", fmt.Sprint(trns.Amount))
+	// 		fmt.Printf("Transaction Hash: %x\n", trns.Hash)
+	// 		if block.Id != 0 {
+	// 			fmt.Printf("Transaction Successfully Signed: %s\n", fmt.Sprint(trns.VerifySignature()))
+	// 		}
+	// 	}
 
-		pow := blockchain.NewProof(block)
-		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
-		fmt.Println("--------------------")
-	}
+	// 	pow := blockchain.NewProof(block)
+	// 	fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
+	// 	fmt.Println("--------------------")
+	// }
 	// dat, _ := json.Marshal(bc)
 	// fmt.Print(string(dat))
 	println(bc.GetBalance(blockchain.PubkeyToAddress(blockchain.MyAddress.PublicKey), tp),
 		bc.GetBalance(blockchain.PubkeyToAddress(pb1), tp))
+	go com.StartHandler()
+	time.Sleep(1 * time.Second)
+	com.BroadcastMessage(com.MAKE_TYPE_HANDSHAKE("127"), []string{"127.0.0.1:8888"})
+	for {
+	}
 }

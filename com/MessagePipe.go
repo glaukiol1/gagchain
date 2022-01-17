@@ -9,11 +9,11 @@ type MsgType struct {
 }
 type Message struct {
 	msgtype MsgType
-	msgdata []string
+	msgdata string
 }
 
 func MessagePipeStart(port int, cb MessagePipeFunc) {
 	StartServer(port, func(message string) {
-		cb(Message{MsgType{strings.Split(message, " ")[0]}, strings.Split(message, " ")[1:]})
+		cb(Message{MsgType{strings.Split(message, " ")[0]}, strings.Split(message, " ")[1]})
 	})
 }

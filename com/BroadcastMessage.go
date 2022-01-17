@@ -10,11 +10,11 @@ func BroadcastMessage(message string, hosts []string) {
 	// connect to the selected node
 	// send the message
 	// selected node passes the message along.
-
 	sendMessage(message, hosts)
 }
 
 func sendMessage(message string, hosts []string) {
+	println(message)
 	for _, host := range hosts {
 		CONNECT := host
 		c, err := net.Dial("tcp", CONNECT)
@@ -22,7 +22,6 @@ func sendMessage(message string, hosts []string) {
 			fmt.Println(err)
 			return
 		}
-
 		c.Write([]byte(message + "\n"))
 		bufio.NewReader(c).ReadString('\n')
 	}
